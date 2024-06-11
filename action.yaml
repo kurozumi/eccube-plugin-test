@@ -1,6 +1,8 @@
 name: 'CI for EC-CUBE Plugin'
 description: ''
 inputs:
+  repository:
+    required: true
   plugin-code:
     required: true
   plugin-package-name:
@@ -25,7 +27,14 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    - name: Checkout plugin
+      uses: actions/checkout@v4
+      with:
+        repository: ${{ inputs.repository }}
+        path: 'plugin'
+
     - name: Archive Plugin
+      working-directory: 'plugin'
       run: |
         tar cvzf ${GITHUB_WORKSPACE}/${{ inputs.plugin-code }}.tar.gz ./*
       shell: bash

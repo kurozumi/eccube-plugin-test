@@ -63,11 +63,10 @@ jobs:
     steps:
       - name: Checkout Plugin
         uses: actions/checkout@v4
+
+      - uses: ./
         with:
           repository: kurozumi/ResizeImage4
-
-      - uses: kurozumi/eccube-ci-action
-        with:
           plugin-code: 'ResizeImage42'
           plugin-package-name: 'ec-cube/resizeimage42'
           eccube-versions: ${{ matrix.eccube-versions }}
