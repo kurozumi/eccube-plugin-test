@@ -59,7 +59,7 @@ runs:
       uses: actions/checkout@v4
       with:
         repository: EC-CUBE/ec-cube
-        ref: ${{ inputs.matrix.eccube-versions }}
+        ref: ${{ inputs.eccube-versions }}
         path: ${{ inputs.working-directory }}
 
     - name: Get Composer Cache Directory
