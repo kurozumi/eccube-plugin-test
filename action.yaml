@@ -1,5 +1,5 @@
 name: 'Plugin test for EC-CUBE'
-description: ''
+description: 'Workflow for testing EC-CUBE plugins'
 branding:
   icon: check
   color: green
