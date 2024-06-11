@@ -9,6 +9,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+env:
+  PLUGIN_CODE: plugin-code
+  PLUGIN_PACKAGE_NAME: 'eccube/plugin-package-name'
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -74,8 +78,8 @@ jobs:
 
       - uses: kurozumi/eccube-plugin-test@v1
         with:
-          plugin-code: 'plugin-code'
-          plugin-package-name: 'ec-cube/plugin-package-name'
+          plugin-code: ${{ env.PLUGIN_CODE }}
+          plugin-package-name: ${{ env.PLUGIN_PACKAGE_NAME }}
           eccube-versions: ${{ matrix.eccube-versions }}
           php-versions: ${{ matrix.php-versions }}
           database-url: ${{ matrix.database_url }}
