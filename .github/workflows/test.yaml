@@ -65,7 +65,7 @@ jobs:
         uses: actions/checkout@4
 
       - name: Checkout Plugin
-      - uses: actions/checkout@4
+        uses: actions/checkout@4
         with:
           repository: kurozumi/ResizeImage4
           path: 'ec-cube'
