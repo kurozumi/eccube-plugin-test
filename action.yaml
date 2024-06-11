@@ -1,49 +1,48 @@
 name: 'CI for EC-CUBE Plugin'
 description: ''
 inputs:
-  repository:
-    required: true
+  working-directory:
+    description: 'Working directory relative to the root directory.'
+    default: 'src'
+  plugin-directory:
+    description: 'Plugin directory relative to the root directory.'
+    default: './'
   plugin-code:
+    description: ''
     required: true
   plugin-package-name:
+    description: ''
     required: true
-  working-directory:
-    default: 'ec-cube'
-  app-env:
-    default: 'test'
-  app-debug:
-    default: 0
   eccube-versions:
+    description: ''
     required: true
   php-versions:
+    description: ''
     required: true
   database-url:
+    description: ''
     required: true
   database-server-version:
+    description: ''
     required: true
   database-charset:
+    description: ''
     required: true
 
 runs:
   using: 'composite'
   steps:
-    - name: Checkout plugin
-      uses: actions/checkout@v4
-      with:
-        repository: ${{ inputs.repository }}
-        path: 'plugin'
-
-    - name: Archive Plugin
-      working-directory: 'plugin'
-      run: |
-        tar cvzf ${GITHUB_WORKSPACE}/${{ inputs.plugin-code }}.tar.gz ./*
-      shell: bash
-
     - name: Setup mock-package-api
       run: |
         mkdir -p /tmp/repos
-        cp ${GITHUB_WORKSPACE}/${{ inputs.plugin-code }}.tar.gz /tmp/repos/${{ inputs.plugin-code }}.tgz
         docker run --name package-api -d -v /tmp/repos:/repos -e MOCK_REPO_DIR=/repos -p 8080:8080 eccube/mock-package-api:composer2
+      shell: bash
+
+    - name: Archive Plugin
+      working-directory: ${{ inputs.plugin-directory }}
+      run: |
+        tar cvzf ${GITHUB_WORKSPACE}/${{ inputs.plugin-code }}.tar.gz ./*
+        cp ${GITHUB_WORKSPACE}/${{ inputs.plugin-code }}.tar.gz /tmp/repos/${{ inputs.plugin-code }}.tgz
       shell: bash
 
     - name: Setup PHP, with composer and extensions
@@ -58,7 +57,7 @@ runs:
       with:
         repository: EC-CUBE/ec-cube
         ref: ${{ inputs.matrix.eccube-versions }}
-        path: ${{ inputs.working-directory }}
+        path: ${{ inputs.workkdir }}
 
     - name: Get Composer Cache Directory
       id: composer-cache
@@ -85,8 +84,8 @@ runs:
         bin/console doctrine:schema:create
         bin/console eccube:fixtures:load
       env:
-        APP_ENV: ${{ inputs.app-env }}
-        APP_DEBUG: ${{ inputs.app-debug }}
+        APP_ENV: 'test'
+        APP_DEBUG: 0
         DATABASE_URL: ${{ matrix.database_url }}
         DATABASE_SERVER_VERSION: ${{ matrix.database_server_version }}
         DATABASE_CHARSET: ${{ matrix.database_charset }}
@@ -100,8 +99,8 @@ runs:
         bin/console cache:clear --no-warmup
         bin/console eccube:plugin:enable --code ${{ inputs.plugin-code }}
       env:
-        APP_ENV: ${{ inputs.app-env }}
-        APP_DEBUG: ${{ inputs.app-debug }}
+        APP_ENV: 'test'
+        APP_DEBUG: 0
         DATABASE_URL: ${{ inputs.database-url }}
         DATABASE_SERVER_VERSION: ${{ inputs.database-server-version }}
         DATABASE_CHARSET: ${{ inputs.database-charset }}
@@ -118,8 +117,8 @@ runs:
           ./vendor/bin/phpunit -c app/Plugin/${{ inputs.plugin-code }}/phpunit.xml.dist $dir
         fi
       env:
-        APP_ENV: ${{ inputs.app-env }}
-        APP_DEBUG: ${{ inputs.app-debug }}
+        APP_ENV: 'test'
+        APP_DEBUG: 0
         DATABASE_URL: ${{ inputs.database-url }}
         DATABASE_SERVER_VERSION: ${{ inputs.database-server-version }}
         DATABASE_CHARSET: ${{ inputs.database-charset }}
@@ -130,8 +129,8 @@ runs:
       run: |
         bin/console eccube:plugin:update ${{ inputs.plugin-code }}
       env:
-        APP_ENV: ${{ inputs.app-env }}
-        APP_DEBUG: ${{ inputs.app-debug }}
+        APP_ENV: 'test'
+        APP_DEBUG: 0
         DATABASE_URL: ${{ inputs.database-url }}
         DATABASE_SERVER_VERSION: ${{ inputs.database-server-version }}
         DATABASE_CHARSET: ${{ inputs.database-charset }}
@@ -143,8 +142,8 @@ runs:
         bin/console eccube:plugin:disable --code ${{ inputs.plugin-code }}
         bin/console eccube:composer:remove ${{ inputs.plugin-package-name }}
       env:
-        APP_ENV: ${{ inputs.app-env }}
-        APP_DEBUG: ${{ inputs.app-debug }}
+        APP_ENV: 'test'
+        APP_DEBUG: 0
         DATABASE_URL: ${{ inputs.database-url }}
         DATABASE_SERVER_VERSION: ${{ inputs.database-server-version }}
         DATABASE_CHARSET: ${{ inputs.database-charset }}
