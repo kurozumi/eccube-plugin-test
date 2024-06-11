@@ -61,11 +61,8 @@ jobs:
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@4
-
       - name: Checkout Plugin
-        uses: actions/checkout@4
+        uses: actions/checkout@v4
         with:
           repository: kurozumi/ResizeImage4
           path: 'ec-cube'
