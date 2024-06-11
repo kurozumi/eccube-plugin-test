@@ -57,7 +57,7 @@ runs:
       with:
         repository: EC-CUBE/ec-cube
         ref: ${{ inputs.matrix.eccube-versions }}
-        path: ${{ inputs.workkdir }}
+        path: ${{ inputs.working-directory }}
 
     - name: Get Composer Cache Directory
       id: composer-cache
