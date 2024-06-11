@@ -1,9 +1,12 @@
-name: 'CI for EC-CUBE Plugin'
+name: 'Plugin test for EC-CUBE'
 description: ''
+branding:
+  icon: check
+  color: green
 inputs:
   working-directory:
     description: 'Working directory relative to the root directory.'
-    default: 'src'
+    default: 'ec-cube'
   plugin-directory:
     description: 'Plugin directory relative to the root directory.'
     default: './'

@@ -1,4 +1,4 @@
-name: test
+name: CI for EC-CUBE Plugin
 
 on:
   push:
