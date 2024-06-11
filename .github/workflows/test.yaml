@@ -74,7 +74,7 @@ jobs:
           ref: '4.2'
           path: 'plugin'
 
-      - uses: kurozumi/eccube-ci-action@main
+      - uses: kurozumi/eccube-plugin-test@main
         with:
           plugin-directory: 'plugin'
           plugin-code: 'ResizeImage42'
