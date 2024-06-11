@@ -74,8 +74,8 @@ jobs:
 
       - uses: kurozumi/eccube-ci-action@main
         with:
-          plugin-code: 'ResizeImage42'
-          plugin-package-name: 'ec-cube/resizeimage42'
+          plugin-code: 'plugin-code'
+          plugin-package-name: 'ec-cube/package-name'
           eccube-versions: ${{ matrix.eccube-versions }}
           php-versions: ${{ matrix.php-versions }}
           database-url: ${{ matrix.database_url }}
