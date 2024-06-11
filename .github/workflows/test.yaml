@@ -65,7 +65,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: kurozumi/ResizeImage4
-          path: 'ec-cube'
 
       - uses: kurozumi/eccube-ci-action@v1
         with:

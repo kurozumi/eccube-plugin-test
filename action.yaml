@@ -28,12 +28,14 @@ runs:
     - name: Archive Plugin
       run: |
         tar cvzf ${GITHUB_WORKSPACE}/${{ inputs.plugin-code }}.tar.gz ./*
+      shell: bash
 
     - name: Setup mock-package-api
       run: |
         mkdir -p /tmp/repos
         cp ${GITHUB_WORKSPACE}/${{ inputs.plugin-code }}.tar.gz /tmp/repos/${{ inputs.plugin-code }}.tgz
         docker run --name package-api -d -v /tmp/repos:/repos -e MOCK_REPO_DIR=/repos -p 8080:8080 eccube/mock-package-api:composer2
+      shell: bash
 
     - name: Setup PHP, with composer and extensions
       uses: shivammathur/setup-php@v2
@@ -79,6 +81,7 @@ runs:
         DATABASE_URL: ${{ matrix.database_url }}
         DATABASE_SERVER_VERSION: ${{ matrix.database_server_version }}
         DATABASE_CHARSET: ${{ matrix.database_charset }}
+      shell: bash
 
     - name: Setup Plugin
       working-directory: ${{ inputs.working-directory }}
@@ -95,6 +98,7 @@ runs:
         DATABASE_CHARSET: ${{ inputs.database-charset }}
         ECCUBE_PACKAGE_API_URL: 'http://127.0.0.1:8080'
         USE_SELFSIGNED_SSL_CERTIFICATE: '1'
+      shell: bash
 
     - name: Run PHPUnit
       working-directory: ${{ inputs.working-directory }}
@@ -110,6 +114,7 @@ runs:
         DATABASE_URL: ${{ inputs.database-url }}
         DATABASE_SERVER_VERSION: ${{ inputs.database-server-version }}
         DATABASE_CHARSET: ${{ inputs.database-charset }}
+      shell: bash
 
     - name: Update Plugin
       working-directory: ${{ inputs.working-directory }}
@@ -121,6 +126,7 @@ runs:
         DATABASE_URL: ${{ inputs.database-url }}
         DATABASE_SERVER_VERSION: ${{ inputs.database-server-version }}
         DATABASE_CHARSET: ${{ inputs.database-charset }}
+      shell: bash
 
     - name: Uninstall Plugin
       working-directory: ${{ inputs.working-directory }}
@@ -133,3 +139,4 @@ runs:
         DATABASE_URL: ${{ inputs.database-url }}
         DATABASE_SERVER_VERSION: ${{ inputs.database-server-version }}
         DATABASE_CHARSET: ${{ inputs.database-charset }}
+      shell: bash
