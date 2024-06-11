@@ -75,7 +75,7 @@ jobs:
       - uses: kurozumi/eccube-ci-action@main
         with:
           plugin-code: 'plugin-code'
-          plugin-package-name: 'ec-cube/package-name'
+          plugin-package-name: 'ec-cube/plugin-package-name'
           eccube-versions: ${{ matrix.eccube-versions }}
           php-versions: ${{ matrix.php-versions }}
           database-url: ${{ matrix.database_url }}
