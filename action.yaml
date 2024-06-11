@@ -1,0 +1,135 @@
+name: 'CI for EC-CUBE Plugin'
+description: ''
+inputs:
+  plugin-code:
+    required: true
+  plugin-package-name:
+    required: true
+  working-directory:
+    default: 'ec-cube'
+  app-env:
+    default: 'test'
+  app-debug:
+    default: 0
+  eccube-versions:
+    required: true
+  php-versions:
+    required: true
+  database-url:
+    required: true
+  database-server-version:
+    required: true
+  database-charset:
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Archive Plugin
+      run: |
+        tar cvzf ${GITHUB_WORKSPACE}/${{ inputs.plugin-code }}.tar.gz ./*
+
+    - name: Setup mock-package-api
+      run: |
+        mkdir -p /tmp/repos
+        cp ${GITHUB_WORKSPACE}/${{ inputs.plugin-code }}.tar.gz /tmp/repos/${{ inputs.plugin-code }}.tgz
+        docker run --name package-api -d -v /tmp/repos:/repos -e MOCK_REPO_DIR=/repos -p 8080:8080 eccube/mock-package-api:composer2
+
+    - name: Setup PHP, with composer and extensions
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ inputs.php-versions }}
+        extensions: mbstring, xml, ctype, iconv, mysql, intl, :xdebug
+        tools: composer:v2
+
+    - name: Checkout EC-CUBE
+      uses: actions/checkout@v4
+      with:
+        repository: EC-CUBE/ec-cube
+        ref: ${{ inputs.matrix.eccube-versions }}
+        path: ${{ inputs.working-directory }}
+
+    - name: Get Composer Cache Directory
+      id: composer-cache
+      run: |
+        echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+      shell: bash
+
+    - uses: actions/cache@v4
+      with:
+        path: ${{ steps.composer-cache.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-composer-
+
+    - name: composer install
+      working-directory: ${{ inputs.working-directory }}
+      run: composer install --dev --no-interaction -o --apcu-autoloader
+      shell: bash
+
+    - name: Setup EC-CUBE
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        bin/console doctrine:database:create
+        bin/console doctrine:schema:create
+        bin/console eccube:fixtures:load
+      env:
+        APP_ENV: ${{ inputs.app-env }}
+        APP_DEBUG: ${{ inputs.app-debug }}
+        DATABASE_URL: ${{ matrix.database_url }}
+        DATABASE_SERVER_VERSION: ${{ matrix.database_server_version }}
+        DATABASE_CHARSET: ${{ matrix.database_charset }}
+
+    - name: Setup Plugin
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        bin/console doctrine:query:sql "update dtb_base_info set authentication_key='dummy'"
+        bin/console eccube:composer:require ${{ inputs.plugin-package-name }}
+        bin/console cache:clear --no-warmup
+        bin/console eccube:plugin:enable --code ${{ inputs.plugin-code }}
+      env:
+        APP_ENV: ${{ inputs.app-env }}
+        APP_DEBUG: ${{ inputs.app-debug }}
+        DATABASE_URL: ${{ inputs.database-url }}
+        DATABASE_SERVER_VERSION: ${{ inputs.database-server-version }}
+        DATABASE_CHARSET: ${{ inputs.database-charset }}
+        ECCUBE_PACKAGE_API_URL: 'http://127.0.0.1:8080'
+        USE_SELFSIGNED_SSL_CERTIFICATE: '1'
+
+    - name: Run PHPUnit
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        rm -r var/cache
+        dir="app/Plugin/${{ inputs.plugin-code }}/Tests"
+        if [ -d $dir ];then
+          ./vendor/bin/phpunit -c app/Plugin/${{ inputs.plugin-code }}/phpunit.xml.dist $dir
+        fi
+      env:
+        APP_ENV: ${{ inputs.app-env }}
+        APP_DEBUG: ${{ inputs.app-debug }}
+        DATABASE_URL: ${{ inputs.database-url }}
+        DATABASE_SERVER_VERSION: ${{ inputs.database-server-version }}
+        DATABASE_CHARSET: ${{ inputs.database-charset }}
+
+    - name: Update Plugin
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        bin/console eccube:plugin:update ${{ inputs.plugin-code }}
+      env:
+        APP_ENV: ${{ inputs.app-env }}
+        APP_DEBUG: ${{ inputs.app-debug }}
+        DATABASE_URL: ${{ inputs.database-url }}
+        DATABASE_SERVER_VERSION: ${{ inputs.database-server-version }}
+        DATABASE_CHARSET: ${{ inputs.database-charset }}
+
+    - name: Uninstall Plugin
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        bin/console eccube:plugin:disable --code ${{ inputs.plugin-code }}
+        bin/console eccube:composer:remove ${{ inputs.plugin-package-name }}
+      env:
+        APP_ENV: ${{ inputs.app-env }}
+        APP_DEBUG: ${{ inputs.app-debug }}
+        DATABASE_URL: ${{ inputs.database-url }}
+        DATABASE_SERVER_VERSION: ${{ inputs.database-server-version }}
+        DATABASE_CHARSET: ${{ inputs.database-charset }}
