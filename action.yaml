@@ -31,7 +31,7 @@ inputs:
   database-charset:
     description: ''
     required: true
-  composer-command:
+  command:
     description: ''
 
 runs:
@@ -77,9 +77,10 @@ runs:
         restore-keys: |
           ${{ runner.os }}-composer-
 
-    - name: composer command
-      if: ${{ inputs.composer-command }}
-      run: ${{ inputs.composer-command }}
+    - name: command
+      if: ${{ inputs.command }}
+      working-directory: ${{ inputs.working-directory }}
+      run: ${{ inputs.command }}
       shell: bash
 
     - name: composer install
