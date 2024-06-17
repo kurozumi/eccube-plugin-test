@@ -88,3 +88,6 @@ jobs:
           database-url: ${{ matrix.database_url }}
           database-server-version: ${{ matrix.database_server_version }}
           database-charset: ${{ matrix.database_charset }}
+          command: |
+            composer config --no-plugins allow-plugins.php-http/discovery false
+            composer require auth0/auth0-php
