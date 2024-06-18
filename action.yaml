@@ -16,6 +16,8 @@ inputs:
   plugin-package-name:
     description: ''
     required: true
+  plugin-enable:
+    description: ''
   eccube-versions:
     description: ''
     required: true
@@ -33,6 +35,7 @@ inputs:
     required: true
   command:
     description: ''
+outputs:
 
 runs:
   using: 'composite'
@@ -94,6 +97,7 @@ runs:
         bin/console doctrine:database:create
         bin/console doctrine:schema:create
         bin/console eccube:fixtures:load
+        bin/console doctrine:query:sql "update dtb_base_info set authentication_key='dummy'"
       env:
         APP_ENV: 'test'
         APP_DEBUG: 0
@@ -102,13 +106,11 @@ runs:
         DATABASE_CHARSET: ${{ matrix.database_charset }}
       shell: bash
 
-    - name: Setup Plugin
+    - name: Install plugin
       working-directory: ${{ inputs.working-directory }}
       run: |
-        bin/console doctrine:query:sql "update dtb_base_info set authentication_key='dummy'"
         bin/console eccube:composer:require ${{ inputs.plugin-package-name }}
         bin/console cache:clear --no-warmup
-        bin/console eccube:plugin:enable --code ${{ inputs.plugin-code }}
       env:
         APP_ENV: 'test'
         APP_DEBUG: 0
@@ -117,6 +119,19 @@ runs:
         DATABASE_CHARSET: ${{ inputs.database-charset }}
         ECCUBE_PACKAGE_API_URL: 'http://127.0.0.1:8080'
         USE_SELFSIGNED_SSL_CERTIFICATE: '1'
+      shell: bash
+
+    - name: Enable plugin
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        ${{ inputs.plugin-enable }}
+        bin/console eccube:plugin:enable --code ${{ inputs.plugin-code }}
+      env:
+        APP_ENV: 'test'
+        APP_DEBUG: 0
+        DATABASE_URL: ${{ inputs.database-url }}
+        DATABASE_SERVER_VERSION: ${{ inputs.database-server-version }}
+        DATABASE_CHARSET: ${{ inputs.database-charset }}
       shell: bash
 
     - name: Run PHPUnit
@@ -135,7 +150,7 @@ runs:
         DATABASE_CHARSET: ${{ inputs.database-charset }}
       shell: bash
 
-    - name: Update Plugin
+    - name: Update plugin
       working-directory: ${{ inputs.working-directory }}
       run: |
         bin/console eccube:plugin:update ${{ inputs.plugin-code }}
@@ -147,7 +162,7 @@ runs:
         DATABASE_CHARSET: ${{ inputs.database-charset }}
       shell: bash
 
-    - name: Uninstall Plugin
+    - name: Uninstall plugin
       working-directory: ${{ inputs.working-directory }}
       run: |
         bin/console eccube:plugin:disable --code ${{ inputs.plugin-code }}
