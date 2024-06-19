@@ -34,7 +34,7 @@ inputs:
   command:
     description: ''
     default: ''
-  dependent-plugins-enable:
+  dependency-plugins-enable:
     description: ''
     default: ''
 
@@ -113,7 +113,7 @@ runs:
       run: |
         bin/console eccube:composer:require ${{ inputs.plugin-package-name }}
         bin/console cache:clear --no-warmup
-        ${{ inputs.dependent-plugins-enable }}
+        ${{ inputs.dependency-plugins-enable }}
         bin/console eccube:plugin:enable --code ${{ inputs.plugin-code }}
       env:
         APP_ENV: 'test'
