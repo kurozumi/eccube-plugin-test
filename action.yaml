@@ -18,6 +18,7 @@ inputs:
     required: true
   plugin-enable:
     description: ''
+    default: ''
   eccube-versions:
     description: ''
     required: true

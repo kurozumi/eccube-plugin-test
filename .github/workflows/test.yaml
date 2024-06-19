@@ -45,7 +45,7 @@ jobs:
           ref: '4.2'
           path: 'plugin'
 
-      - uses: kurozumi/eccube-plugin-test@main
+      - uses: ./
         with:
           plugin-directory: 'plugin'
           plugin-code: ${{ env.PLUGIN_CODE }}
