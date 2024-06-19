@@ -50,7 +50,8 @@ runs:
       working-directory: ${{ inputs.plugin-directory }}
       run: |
         tar cvzf ${GITHUB_WORKSPACE}/${{ inputs.plugin-code }}.tar.gz ./*
-        cp ${GITHUB_WORKSPACE}/${{ inputs.plugin-code }}.tar.gz /tmp/repos/${{ inputs.plugin-code }}.tgz
+        mv ${GITHUB_WORKSPACE}/${{ inputs.plugin-code }}.tar.gz /tmp/repos/${{ inputs.plugin-code }}.tgz
+        ls /tmp/repos
       shell: bash
 
     - name: Setup PHP, with composer and extensions
@@ -124,8 +125,11 @@ runs:
     - name: Enable plugin
       working-directory: ${{ inputs.working-directory }}
       run: |
-        ${{ inputs.plugin-enable }}
-        bin/console eccube:plugin:enable --code ${{ inputs.plugin-code }}
+        if [ ${{ inputs.plugin-enable }} = '' ]; then
+          bin/console eccube:plugin:enable --code ${{ inputs.plugin-code }}
+        else
+          ${{ inputs.plugin-enable }} 
+        fi
       env:
         APP_ENV: 'test'
         APP_DEBUG: 0
