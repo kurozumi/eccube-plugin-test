@@ -16,6 +16,9 @@ inputs:
   plugin-package-name:
     description: ''
     required: true
+  plugin-archive:
+    description: ''
+    default: 'true'
   eccube-versions:
     description: ''
     required: true
@@ -47,12 +50,12 @@ runs:
         docker run --name package-api -d -v /tmp/repos:/repos -e MOCK_REPO_DIR=/repos -p 8080:8080 eccube/mock-package-api:composer2
       shell: bash
 
-    - name: Archive Plugin
+    - name: Archive plugin
+      if: ${{ inputs.plugin-archive == 'true' }}
       working-directory: ${{ inputs.plugin-directory }}
       run: |
         tar cvzf ${GITHUB_WORKSPACE}/${{ inputs.plugin-code }}.tar.gz ./*
         mv ${GITHUB_WORKSPACE}/${{ inputs.plugin-code }}.tar.gz /tmp/repos/${{ inputs.plugin-code }}.tgz
-        ls /tmp/repos
       shell: bash
 
     - name: Setup PHP, with composer and extensions
