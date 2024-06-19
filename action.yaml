@@ -40,6 +40,9 @@ inputs:
   dependency-plugins-enable:
     description: ''
     default: ''
+  dependency-plugins-disable:
+    description: ''
+    default: ''
 
 runs:
   using: 'composite'
@@ -160,6 +163,7 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       run: |
         bin/console eccube:plugin:disable --code ${{ inputs.plugin-code }}
+        ${{ inputs.dependency-plugins-disable }}
         bin/console eccube:composer:remove ${{ inputs.plugin-package-name }}
       env:
         APP_ENV: 'test'
