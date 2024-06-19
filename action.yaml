@@ -18,7 +18,7 @@ inputs:
     required: true
   plugin-enable:
     description: ''
-    default: 'bin/console eccube:plugin:enable --code ${{ inputs.plugin-code }}'
+    default: ''
   eccube-versions:
     description: ''
     required: true
@@ -126,6 +126,7 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       run: |
         ${{ inputs.plugin-enable }}
+        bin/console eccube:plugin:enable --code ${{ inputs.plugin-code }}
       env:
         APP_ENV: 'test'
         APP_DEBUG: 0
