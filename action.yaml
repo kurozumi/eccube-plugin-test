@@ -125,10 +125,10 @@ runs:
     - name: Enable plugin
       working-directory: ${{ inputs.working-directory }}
       run: |
-        if [ ${{ inputs.plugin-enable }} = '' ]; then
-          bin/console eccube:plugin:enable --code ${{ inputs.plugin-code }}
+        if [ ${{ inputs.plugin-enable }} ]; then
+          ${{ inputs.plugin-enable }}
         else
-          ${{ inputs.plugin-enable }} 
+          bin/console eccube:plugin:enable --code ${{ inputs.plugin-code }}
         fi
       env:
         APP_ENV: 'test'
