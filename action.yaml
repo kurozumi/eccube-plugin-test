@@ -43,6 +43,9 @@ inputs:
   dependency-plugins-disable:
     description: ''
     default: ''
+  composer-version:
+    description: ''
+    default: 'v2'
 
 runs:
   using: 'composite'
@@ -66,7 +69,7 @@ runs:
       with:
         php-version: ${{ inputs.php-versions }}
         extensions: mbstring, xml, ctype, iconv, mysql, intl, :xdebug
-        tools: composer:v2
+        tools: composer:${{ inputs.composer-versions }}
 
     - name: Checkout EC-CUBE
       uses: actions/checkout@v4
