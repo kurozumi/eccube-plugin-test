@@ -16,8 +16,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        eccube-versions: [ '4.0', '4.1', '4.2', '4.3' ]
-        php-versions: [ '7.4', '8.1' ]
+        eccube-versions: [ '4.2', '4.3' ]
+        php-versions: [ '8.1' ]
         database: [ 'mysql8' ]
         include:
           - database: mysql8
@@ -58,4 +58,3 @@ jobs:
           pre-composer-install: |
             composer config --no-plugins allow-plugins.php-http/discovery false
             composer require auth0/auth0-php
-            composer require --dev kiy0taka/eccube4-test-fixer
