@@ -45,7 +45,7 @@ inputs:
     default: ''
   composer-version:
     description: ''
-    default: 'v2'
+    default: '2'
 
 runs:
   using: 'composite'
@@ -53,7 +53,7 @@ runs:
     - name: Setup mock-package-api
       run: |
         mkdir -p /tmp/repos
-        docker run --name package-api -d -v /tmp/repos:/repos -e MOCK_REPO_DIR=/repos -p 8080:8080 eccube/mock-package-api:composer2
+        docker run --name package-api -d -v /tmp/repos:/repos -e MOCK_REPO_DIR=/repos -p 8080:8080 eccube/mock-package-api:composer${{ inputs.composer-versions }}
       shell: bash
 
     - name: Archive plugin
@@ -69,7 +69,7 @@ runs:
       with:
         php-version: ${{ inputs.php-versions }}
         extensions: mbstring, xml, ctype, iconv, mysql, intl, :xdebug
-        tools: composer:${{ inputs.composer-versions }}
+        tools: composer:v${{ inputs.composer-versions }}
 
     - name: Checkout EC-CUBE
       uses: actions/checkout@v4
