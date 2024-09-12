@@ -137,7 +137,7 @@ runs:
         rm -r var/cache
         dir="app/Plugin/${{ inputs.plugin-code }}/Tests"
         if [ -d $dir ];then
-          ./vendor/bin/phpunit -c app/Plugin/${{ inputs.plugin-code }}/phpunit.xml.dist $dir
+          ./vendor/bin/phpunit $dir
         fi
       env:
         APP_ENV: 'test'
