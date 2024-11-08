@@ -124,9 +124,9 @@ runs:
       env:
         APP_ENV: 'test'
         APP_DEBUG: 0
-        DATABASE_URL: ${{ inputs.database-url }}
-        DATABASE_SERVER_VERSION: ${{ inputs.database-server-version }}
-        DATABASE_CHARSET: ${{ inputs.database-charset }}
+        DATABASE_URL: ${{ matrix.database_url }}
+        DATABASE_SERVER_VERSION: ${{ matrix.database_server_version }}
+        DATABASE_CHARSET: ${{ matrix.database_charset }}
         ECCUBE_PACKAGE_API_URL: 'http://127.0.0.1:8080'
         USE_SELFSIGNED_SSL_CERTIFICATE: '1'
       shell: bash
@@ -142,9 +142,9 @@ runs:
       env:
         APP_ENV: 'test'
         APP_DEBUG: 0
-        DATABASE_URL: ${{ inputs.database-url }}
-        DATABASE_SERVER_VERSION: ${{ inputs.database-server-version }}
-        DATABASE_CHARSET: ${{ inputs.database-charset }}
+        DATABASE_URL: ${{ matrix.database_url }}
+        DATABASE_SERVER_VERSION: ${{ matrix.database_server_version }}
+        DATABASE_CHARSET: ${{ matrix.database_charset }}
       shell: bash
 
     - name: Update plugin
@@ -154,9 +154,9 @@ runs:
       env:
         APP_ENV: 'test'
         APP_DEBUG: 0
-        DATABASE_URL: ${{ inputs.database-url }}
-        DATABASE_SERVER_VERSION: ${{ inputs.database-server-version }}
-        DATABASE_CHARSET: ${{ inputs.database-charset }}
+        DATABASE_URL: ${{ matrix.database_url }}
+        DATABASE_SERVER_VERSION: ${{ matrix.database_server_version }}
+        DATABASE_CHARSET: ${{ matrix.database_charset }}
       shell: bash
 
     - name: Uninstall plugin
@@ -168,7 +168,7 @@ runs:
       env:
         APP_ENV: 'test'
         APP_DEBUG: 0
-        DATABASE_URL: ${{ inputs.database-url }}
-        DATABASE_SERVER_VERSION: ${{ inputs.database-server-version }}
-        DATABASE_CHARSET: ${{ inputs.database-charset }}
+        DATABASE_URL: ${{ matrix.database_url }}
+        DATABASE_SERVER_VERSION: ${{ matrix.database_server_version }}
+        DATABASE_CHARSET: ${{ matrix.database_charset }}
       shell: bash

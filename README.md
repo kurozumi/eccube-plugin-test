@@ -76,13 +76,10 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
-      - uses: kurozumi/eccube-plugin-test@v1
+      - uses: kurozumi/eccube-plugin-test
         with:
           plugin-code: ${{ env.PLUGIN_CODE }}
           plugin-package-name: ${{ env.PLUGIN_PACKAGE_NAME }}
           eccube-versions: ${{ matrix.eccube-versions }}
           php-versions: ${{ matrix.php-versions }}
-          database-url: ${{ matrix.database_url }}
-          database-server-version: ${{ matrix.database_server_version }}
-          database-charset: ${{ matrix.database_charset }}
 ```
