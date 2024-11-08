@@ -19,12 +19,6 @@ inputs:
   plugin-archive:
     description: ''
     default: 'true'
-  eccube-versions:
-    description: ''
-    required: true
-  php-versions:
-    description: ''
-    required: true
   database-url:
     description: ''
     required: true
@@ -43,6 +37,9 @@ inputs:
   dependency-plugins-disable:
     description: ''
     default: ''
+  composer-version:
+    description: ''
+    default: 'v2'
 
 runs:
   using: 'composite'
@@ -50,7 +47,7 @@ runs:
     - name: Setup mock-package-api
       run: |
         mkdir -p /tmp/repos
-        docker run --name package-api -d -v /tmp/repos:/repos -e MOCK_REPO_DIR=/repos -p 8080:8080 eccube/mock-package-api:composer2
+        docker run --name package-api -d -v /tmp/repos:/repos -e MOCK_REPO_DIR=/repos -p 8080:8080 eccube/mock-package-api:${{ (inputs.composer-version == 'v2' && 'composer2') || 'latest' }}
       shell: bash
 
     - name: Archive plugin
@@ -64,15 +61,15 @@ runs:
     - name: Setup PHP, with composer and extensions
       uses: shivammathur/setup-php@v2
       with:
-        php-version: ${{ inputs.php-versions }}
+        php-version: ${{ matrix.php-versions }}
         extensions: mbstring, xml, ctype, iconv, mysql, intl, :xdebug
-        tools: composer:v2
+        tools: composer:${{ inputs.composer-version }}
 
     - name: Checkout EC-CUBE
       uses: actions/checkout@v4
       with:
         repository: EC-CUBE/ec-cube
-        ref: ${{ inputs.eccube-versions }}
+        ref: ${{ matrix.eccube-versions }}
         path: ${{ inputs.working-directory }}
 
     - name: Get Composer Cache Directory

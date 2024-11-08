@@ -80,6 +80,4 @@ jobs:
         with:
           plugin-code: ${{ env.PLUGIN_CODE }}
           plugin-package-name: ${{ env.PLUGIN_PACKAGE_NAME }}
-          eccube-versions: ${{ matrix.eccube-versions }}
-          php-versions: ${{ matrix.php-versions }}
 ```
