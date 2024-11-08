@@ -76,7 +76,7 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
-      - uses: kurozumi/eccube-plugin-test
+      - uses: kurozumi/eccube-plugin-test@main
         with:
           plugin-code: ${{ env.PLUGIN_CODE }}
           plugin-package-name: ${{ env.PLUGIN_PACKAGE_NAME }}
