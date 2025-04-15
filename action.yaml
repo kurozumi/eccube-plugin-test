@@ -31,6 +31,9 @@ inputs:
   composer-version:
     description: ''
     default: 'v2'
+  app-env:
+    description: ''
+    default: 'test'
 
 runs:
   using: 'composite'
@@ -95,7 +98,7 @@ runs:
         bin/console eccube:fixtures:load
         bin/console doctrine:query:sql "update dtb_base_info set authentication_key='dummy'"
       env:
-        APP_ENV: 'test'
+        APP_ENV: ${{ inputs.app-env }}
         APP_DEBUG: 0
         DATABASE_URL: ${{ matrix.database_url }}
         DATABASE_SERVER_VERSION: ${{ matrix.database_server_version }}
