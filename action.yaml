@@ -34,6 +34,9 @@ inputs:
   app-env:
     description: ''
     default: 'test'
+  app-debug:
+    description: ''
+    default: 0
 
 runs:
   using: 'composite'
@@ -99,7 +102,7 @@ runs:
         bin/console doctrine:query:sql "update dtb_base_info set authentication_key='dummy'"
       env:
         APP_ENV: ${{ inputs.app-env }}
-        APP_DEBUG: 0
+        APP_DEBUG: ${{ inputs.app-debug }}
         DATABASE_URL: ${{ matrix.database_url }}
         DATABASE_SERVER_VERSION: ${{ matrix.database_server_version }}
         DATABASE_CHARSET: ${{ matrix.database_charset }}
@@ -113,8 +116,8 @@ runs:
         ${{ inputs.dependency-plugins-enable }}
         bin/console eccube:plugin:enable --code ${{ inputs.plugin-code }}
       env:
-        APP_ENV: 'test'
-        APP_DEBUG: 0
+        APP_ENV: ${{ inputs.app-env }}
+        APP_DEBUG: ${{ inputs.app-debug }}
         DATABASE_URL: ${{ matrix.database_url }}
         DATABASE_SERVER_VERSION: ${{ matrix.database_server_version }}
         DATABASE_CHARSET: ${{ matrix.database_charset }}
@@ -131,8 +134,8 @@ runs:
           ./vendor/bin/phpunit $dir --bootstrap=$dir/bootstrap.php
         fi
       env:
-        APP_ENV: 'test'
-        APP_DEBUG: 0
+        APP_ENV: ${{ inputs.app-env }}
+        APP_DEBUG: ${{ inputs.app-debug }}
         DATABASE_URL: ${{ matrix.database_url }}
         DATABASE_SERVER_VERSION: ${{ matrix.database_server_version }}
         DATABASE_CHARSET: ${{ matrix.database_charset }}
@@ -143,8 +146,8 @@ runs:
       run: |
         bin/console eccube:plugin:update ${{ inputs.plugin-code }}
       env:
-        APP_ENV: 'test'
-        APP_DEBUG: 0
+        APP_ENV: ${{ inputs.app-env }}
+        APP_DEBUG: ${{ inputs.app-debug }}
         DATABASE_URL: ${{ matrix.database_url }}
         DATABASE_SERVER_VERSION: ${{ matrix.database_server_version }}
         DATABASE_CHARSET: ${{ matrix.database_charset }}
@@ -157,8 +160,8 @@ runs:
         ${{ inputs.dependency-plugins-disable }}
         bin/console eccube:composer:remove ${{ inputs.plugin-package-name }}
       env:
-        APP_ENV: 'test'
-        APP_DEBUG: 0
+        APP_ENV: ${{ inputs.app-env }}
+        APP_DEBUG: ${{ inputs.app-debug }}
         DATABASE_URL: ${{ matrix.database_url }}
         DATABASE_SERVER_VERSION: ${{ matrix.database_server_version }}
         DATABASE_CHARSET: ${{ matrix.database_charset }}
