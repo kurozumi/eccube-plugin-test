@@ -125,7 +125,7 @@ runs:
         rm -r var/cache
         dir="app/Plugin/${{ inputs.plugin-code }}/Tests"
         if [ -d $dir ];then
-          ./vendor/bin/phpunit $dir
+          ./vendor/bin/phpunit $dir --bootstrap=$dir/bootstrap.php
         fi
       env:
         APP_ENV: 'test'
