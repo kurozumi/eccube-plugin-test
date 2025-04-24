@@ -51,8 +51,7 @@ runs:
       if: ${{ inputs.plugin-archive == 'true' }}
       working-directory: ${{ inputs.plugin-directory }}
       run: |
-        tar cvzf ${GITHUB_WORKSPACE}/${{ inputs.plugin-code }}.tar.gz ./*
-        mv ${GITHUB_WORKSPACE}/${{ inputs.plugin-code }}.tar.gz /tmp/repos/${{ inputs.plugin-code }}.tgz
+        git archive HEAD --format=tgz > /tmp/repos/${{ inputs.plugin-code }}.tgz
       shell: bash
 
     - name: Setup PHP, with composer and extensions
