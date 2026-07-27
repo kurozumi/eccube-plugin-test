@@ -81,3 +81,38 @@ jobs:
           plugin-code: ${{ env.PLUGIN_CODE }}
           plugin-package-name: ${{ env.PLUGIN_PACKAGE_NAME }}
 ```
+## 入力
+
+| 入力 | 既定 | 説明 |
+|------|------|------|
+| `plugin-code` | （必須） | プラグインコード |
+| `plugin-package-name` | （必須） | composer のパッケージ名 |
+| `working-directory` | `ec-cube` | EC-CUBE を配置するディレクトリ |
+| `plugin-directory` | `./` | プラグインのディレクトリ |
+| `plugin-archive` | `true` | プラグインを tgz にして mock-package-api へ置く |
+| `pre-composer-install` | | `composer install` の前に実行するコマンド |
+| `dependency-plugins-enable` | | 依存プラグインを有効化するコマンド |
+| `dependency-plugins-disable` | | 依存プラグインを無効化するコマンド |
+| `composer-version` | `v2` | composer のメジャーバージョン |
+| `app-env` | `test` | `APP_ENV` |
+| `app-debug` | `0` | `APP_DEBUG` |
+| `core-tests` | | プラグインを有効にしたまま実行する本体テスト |
+
+### core-tests
+
+プラグインを有効にした状態で、EC-CUBE 本体のテストを実行します。プラグインが
+本体の挙動を壊していないかを見るためのものです。
+
+```yaml
+      - uses: kurozumi/eccube-plugin-test@main
+        with:
+          plugin-code: ${{ env.PLUGIN_CODE }}
+          plugin-package-name: ${{ env.PLUGIN_PACKAGE_NAME }}
+          core-tests: >-
+            tests/Eccube/Tests/Web/ShoppingControllerTest.php
+            tests/Eccube/Tests/Web/CartValidationTest.php
+```
+
+EC-CUBE 4.3 までは、本体のテストクラスを継承した空のクラスをプラグイン側に置く
+ことで同じことができました。4.4 で本体のテストクラスがすべて `final` になり
+継承できなくなったため、この入力で代替します。
