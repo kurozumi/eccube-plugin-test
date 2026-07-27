@@ -6,9 +6,13 @@ on:
   pull_request:
   workflow_dispatch:
 
+# 検証には tests/fixtures/SamplePlugin44 を使う。
+# 従来使っていた ResizeImage4 には 4.4 対応ブランチが無く、手持ちの 4.4 対応
+# プラグインは非公開リポジトリのため、この workflow からは取得できない。
+# 雛形をそのまま同梱しておけば、外部リポジトリにも secrets にも依存しない。
 env:
-  PLUGIN_CODE: ResizeImage42
-  PLUGIN_PACKAGE_NAME: 'ec-cube/resizeimage42'
+  PLUGIN_CODE: SamplePlugin44
+  PLUGIN_PACKAGE_NAME: 'ec-cube/sampleplugin44'
 
 jobs:
   test:
@@ -16,40 +20,35 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        eccube-versions: [ '4.2', '4.3' ]
-        php-versions: [ '8.1' ]
-        database: [ 'mysql8' ]
+        eccube-versions: [ '4.4' ]
+        php-versions: [ '8.2' ]
+        database: [ 'mysql' ]
         include:
-          - database: mysql8
-            database_url: mysql://root:password@127.0.0.1:3308/eccube_db
+          - database: mysql
+            database_url: mysql://root:password@127.0.0.1:3306/eccube_db
             database_server_version: 8
             database_charset: utf8mb4
 
     services:
-      mysql8:
-        image: mysql:8
+      mysql:
+        image: mysql:8.4
         env:
           MYSQL_ROOT_PASSWORD: password
         ports:
-          - 3308:3306
+          - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Checkout plugin
-        uses: actions/checkout@v4
+      # @main ではなくチェックアウトしたものを使う。
+      # そうしないと、この workflow を変更しても PR の中身が検証されない。
+      - uses: ./
         with:
-          repository: kurozumi/ResizeImage4
-          ref: '4.2'
-          path: 'plugin'
-
-      - uses: kurozumi/eccube-plugin-test@main
-        with:
-          plugin-directory: 'plugin'
+          plugin-directory: 'tests/fixtures/SamplePlugin44'
           plugin-code: ${{ env.PLUGIN_CODE }}
           plugin-package-name: ${{ env.PLUGIN_PACKAGE_NAME }}
-          pre-composer-install: |
-            composer config --no-plugins allow-plugins.php-http/discovery false
-            composer require auth0/auth0-php
+          # core-tests 入力の動作確認を兼ねる
+          core-tests: >-
+            tests/Eccube/Tests/Web/UserDataControllerTest.php
