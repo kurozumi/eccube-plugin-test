@@ -6,11 +6,13 @@ on:
   pull_request:
   workflow_dispatch:
 
-# 検証用のプラグイン。会員グループ管理アドオンの 4.4 対応ブランチを使う。
-# 従来使っていた ResizeImage4 には 4.4 対応ブランチが無い。
+# 検証には tests/fixtures/SamplePlugin44 を使う。
+# 従来使っていた ResizeImage4 には 4.4 対応ブランチが無く、手持ちの 4.4 対応
+# プラグインは非公開リポジトリのため、この workflow からは取得できない。
+# 雛形をそのまま同梱しておけば、外部リポジトリにも secrets にも依存しない。
 env:
-  PLUGIN_CODE: CustomerGroup44
-  PLUGIN_PACKAGE_NAME: 'ec-cube/customergroup44'
+  PLUGIN_CODE: SamplePlugin44
+  PLUGIN_PACKAGE_NAME: 'ec-cube/sampleplugin44'
 
 jobs:
   test:
@@ -40,18 +42,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Checkout plugin
-        uses: actions/checkout@v4
-        with:
-          repository: kurozumi/eccube-plugin-customer-group
-          ref: '4.4'
-          path: 'plugin'
-
       # @main ではなくチェックアウトしたものを使う。
       # そうしないと、この workflow を変更しても PR の中身が検証されない。
       - uses: ./
         with:
-          plugin-directory: 'plugin'
+          plugin-directory: 'tests/fixtures/SamplePlugin44'
           plugin-code: ${{ env.PLUGIN_CODE }}
           plugin-package-name: ${{ env.PLUGIN_PACKAGE_NAME }}
           # core-tests 入力の動作確認を兼ねる
